@@ -23,7 +23,8 @@ echo -e "\t\t${gray}github.com/abund4nt${end}"
 
 function helpPanel(){
 	echo -e "\n${red}[+]${end} ${gray}Uso ./AbuMap.sh${end}"
-	echo -e "\t${red}-i${end} ${gray}Enter the ip of the system to scan.${end} ${yellow}Example: ./AbuMap.sh -i 10.10.10.224${end}\n"
+	echo -e "\t${red}-i${end} ${gray}Enter the ip of the system to scan.${end} ${yellow}Example: ./AbuMap.sh -i 192.168.1.1${end}"
+  echo -e "\t${red}-t${end} ${gray}Enteder the default gateway and subnet mask.${end} ${yellow}Example: ./AbuMap.sh -r 192.168.1.0/24${end}"
 }
 
 function scannerIp(){
@@ -36,15 +37,26 @@ function scannerIp(){
 
 declare -i parameter_counter=0
 
-function scannerRed(){
-    		fi
-	done
+function scannerRed(){  
+  ip_cidr="$1"
+  IFS='/' read -r -a parts <<< "$ip_cidr"
+  ip_address="${parts[0]}"
+  subnet_mask="${parts[1]}"
+  IFS='.' read -r -a octets <<< "$ip_address"
+  base_ip="${octets[0]}.${octets[1]}.${octets[2]}"
+
+  echo -e "${red}[+]${end} ${gray}Iniciando escaneo de la red $ip_cidr ...${end}\n"
+
+  for i in $(seq 1 254); do
+    target_ip="$base_ip.$i"
+    ping -c 1 -w 1 $target_ip > /dev/null 2>&1 && echo -e "\t${red}[!]${end} ${gray}Host -> $target_ip OPEN.${end}" &
+  done; wait
 }
 
-while getopts "i:h" arg; do
+while getopts "i:t:h" arg; do
 	case $arg in
 		i) ip="$OPTARG"; let parameter_counter+=1;;
-		r) ip_cidr="$OPTARG"; let parameter_counter+=2;;
+		t) ip_cidr="$OPTARG"; let parameter_counter+=2;;
 		h) ;;
 	esac
 done
