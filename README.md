@@ -1,6 +1,6 @@
 # AbuMap
 
-**AbuMap** es una herramienta de línea de comandos escrita en Bash que sirve para descubrir puertos abiertos en servidores y escanear redes internas para detectar equipos conectados.
+**AbuMap** is a command line tool written in Bash for discovering open ports on servers and scanning internal networks for connected computers.
 
 Setup:
 
